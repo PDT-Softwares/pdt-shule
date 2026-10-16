@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard'
 import Students from './pages/Students'
 import Classes from './pages/Classes'
 import Subjects from './pages/Subjects'
+import Terms from './pages/Terms'
 import Marks from './pages/Marks'
 import Attendance from './pages/Attendance'
 import Timetable from './pages/Timetable'
@@ -26,9 +27,7 @@ function RequireAuth() {
 function RequireSchool() {
   const { currentSchool, loading, memberships } = useSchool()
   if (loading) return <div style={{ padding: 40 }}>Loading…</div>
-  if (memberships && memberships.length === 0) {
-    return <Navigate to="/create-school" replace />
-  }
+  if (memberships && memberships.length === 0) return <Navigate to="/create-school" replace />
   if (!currentSchool) return <div style={{ padding: 40 }}>Loading school…</div>
   return <Outlet />
 }
@@ -52,6 +51,7 @@ export default function App() {
                   <Route path="students" element={<Students />} />
                   <Route path="classes" element={<Classes />} />
                   <Route path="subjects" element={<Subjects />} />
+                  <Route path="terms" element={<Terms />} />
                   <Route path="marks" element={<Marks />} />
                   <Route path="attendance" element={<Attendance />} />
                   <Route path="timetable" element={<Timetable />} />

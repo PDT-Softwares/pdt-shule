@@ -7,6 +7,7 @@ const navItems = [
   { to: '/app/students', label: 'Students' },
   { to: '/app/classes', label: 'Classes' },
   { to: '/app/subjects', label: 'Subjects' },
+  { to: '/app/terms', label: 'Terms' },
   { to: '/app/marks', label: 'Marks' },
   { to: '/app/attendance', label: 'Attendance' },
   { to: '/app/timetable', label: 'Timetable' },
@@ -34,9 +35,7 @@ export default function WorkspaceLayout() {
           PDT Shule
         </div>
 
-        <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 4 }}>
-          School
-        </div>
+        <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 4 }}>School</div>
         <select
           value={currentSchool?.school.id ?? ''}
           onChange={(e) => chooseSchool(e.target.value)}
@@ -76,15 +75,11 @@ export default function WorkspaceLayout() {
         }}>
           <div>
             <strong>{currentSchool?.school.name}</strong>
-            <span style={{ opacity: 0.6, marginLeft: 8 }}>
-              ({currentRole})
-            </span>
+            <span style={{ opacity: 0.6, marginLeft: 8 }}>({currentRole})</span>
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <span style={{ fontSize: 13, opacity: 0.7 }}>{user?.email}</span>
-            <button onClick={handleSignOut} style={{ padding: '6px 10px' }}>
-              Sign out
-            </button>
+            <button onClick={handleSignOut} style={{ padding: '6px 10px' }}>Sign out</button>
           </div>
         </header>
 
