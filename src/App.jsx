@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
+import CreateSchool from './pages/CreateSchool'
 
 function Protected({ children }) {
   const { user, loading } = useAuth()
@@ -18,6 +19,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/create-school" element={<Protected><CreateSchool /></Protected>} />
           <Route path="/" element={<Protected><Home /></Protected>} />
         </Routes>
       </BrowserRouter>
