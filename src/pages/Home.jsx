@@ -35,13 +35,18 @@ export default function Home() {
       )}
 
       {memberships && memberships.length > 0 && (
-        <ul>
-          {memberships.map((m) => (
-            <li key={m.schools.id}>
-              <strong>{m.schools.name}</strong> — role: {m.role} (slug: {m.schools.slug})
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul>
+            {memberships.map((m) => (
+              <li key={m.schools.id}>
+                <strong>{m.schools.name}</strong> — role: {m.role}
+              </li>
+            ))}
+          </ul>
+          <p style={{ marginTop: 16 }}>
+            <Link to="/app"><strong>Enter workspace →</strong></Link>
+          </p>
+        </>
       )}
     </div>
   )
