@@ -1,12 +1,14 @@
 ﻿import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { SchoolProvider, useSchool } from './contexts/SchoolContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
 import CreateSchool from './pages/CreateSchool'
 import WorkspaceLayout from './layouts/WorkspaceLayout'
 import Dashboard from './pages/Dashboard'
+import AI from './pages/AI'
 import Students from './pages/Students'
 import Classes from './pages/Classes'
 import Subjects from './pages/Subjects'
@@ -34,35 +36,38 @@ function RequireSchool() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <SchoolProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <SchoolProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
 
-            <Route element={<RequireAuth />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/create-school" element={<CreateSchool />} />
+              <Route element={<RequireAuth />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/create-school" element={<CreateSchool />} />
 
-              <Route element={<RequireSchool />}>
-                <Route path="/app" element={<WorkspaceLayout />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="students" element={<Students />} />
-                  <Route path="classes" element={<Classes />} />
-                  <Route path="subjects" element={<Subjects />} />
-                  <Route path="terms" element={<Terms />} />
-                  <Route path="marks" element={<Marks />} />
-                  <Route path="attendance" element={<Attendance />} />
-                  <Route path="timetable" element={<Timetable />} />
-                  <Route path="announcements" element={<Announcements />} />
-                  <Route path="resources" element={<Resources />} />
+                <Route element={<RequireSchool />}>
+                  <Route path="/app" element={<WorkspaceLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="ai" element={<AI />} />
+                    <Route path="students" element={<Students />} />
+                    <Route path="classes" element={<Classes />} />
+                    <Route path="subjects" element={<Subjects />} />
+                    <Route path="terms" element={<Terms />} />
+                    <Route path="marks" element={<Marks />} />
+                    <Route path="attendance" element={<Attendance />} />
+                    <Route path="timetable" element={<Timetable />} />
+                    <Route path="announcements" element={<Announcements />} />
+                    <Route path="resources" element={<Resources />} />
+                  </Route>
                 </Route>
               </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </SchoolProvider>
-    </AuthProvider>
+            </Routes>
+          </BrowserRouter>
+        </SchoolProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
