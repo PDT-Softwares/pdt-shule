@@ -1,6 +1,6 @@
 ﻿const API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
-const MODEL = 'gemini-3.8-flash'
+const MODEL = 'gemini-3.5-flash-lite'
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/interactions'
 
 export async function callGemini(prompt, systemInstruction = '') {
@@ -27,7 +27,6 @@ export async function callGemini(prompt, systemInstruction = '') {
     throw new Error('Gemini error: ' + JSON.stringify(data))
   }
 
-  // Extract text from the new Interactions API response
   const steps = data?.steps ?? []
   for (const step of steps) {
     if (step.type === 'model_output' && Array.isArray(step.content)) {

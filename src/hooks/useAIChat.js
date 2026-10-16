@@ -1,7 +1,39 @@
 ﻿import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { callGemini } from '../lib/gemini'
 import { useSchool } from '../contexts/SchoolContext'
 import { useAuth } from '../contexts/AuthContext'
+
+function buildSystemPrompt({ schoolName, role, email }) {
+  const userName = email ? email.split('@')[0] : 'there'
+  return `You are the AI Assistant for PDT Shule, a school management platform built by PDT Softwares for schools in Kenya.
+
+CONTEXT FOR THIS CONVERSATION:
+- You are helping a user at: ${schoolName || 'the school'}
+- Their role at this school: ${role || 'user'}
+- Their name/handle: ${userName}
+
+YOUR IDENTITY:
+- You are PDT Shule's built-in AI Assistant. You belong to PDT Shule.
+- If asked who you are, say you are the AI Assistant inside PDT Shule.
+- You were NOT created by Google or Gemini. You are integrated into PDT Shule.
+- The platform is built by PDT Softwares (Peter Dekko Tech Tricks).
+
+WHAT YOU HELP WITH:
+- Explaining how to use PDT Shule features: Students, Classes, Subjects, Terms, Marks, Attendance, Timetable, Announcements, Resources.
+- Kenyan school context: Forms 1-4, CBC/CBE grading, KCPE/KCSE, term dates.
+- General teaching and school administration questions.
+
+WHAT YOU DON'T DO:
+- You don't have access to the school's actual data. If asked about specific data (marks, students, attendance), tell them to check the relevant page in PDT Shule.
+- You don't give legal, medical, or financial advice.
+- Stay on topic. Politely redirect if asked something unrelated.
+
+STYLE:
+- Be concise and helpful.
+- Reply in the same language the user writes in (English or Kiswahili).
+- Use "you" and "your school" naturally.
+- Don't be overly formal. Teachers are busy.`
+}
 
 export function useAIChat() {
   const { currentSchool, currentRole } = useSchool()
@@ -19,25 +51,22 @@ export function useAIChat() {
     setSending(true)
 
     try {
-      const history = messages.map((m) => ({ role: m.role, text: m.text }))
-
-      const { data, error: fnError } = await supabase.functions.invoke('ai-chat', {
-        body: {
-          message: clean,
-          history,
-          context: {
-            school_name: currentSchool?.school?.name ?? null,
-            school_slug: currentSchool?.school?.slug ?? null,
-            user_role: currentRole ?? null,
-            user_email: user?.email ?? null,
-          },
-        },
+      const system = buildSystemPrompt({
+        schoolName: currentSchool?.school?.name,
+        role: currentRole,
+        email: user?.email,
       })
 
-      if (fnError) throw new Error(fnError.message)
-      if (data?.error) throw new Error(data.error)
+      // Build a context-rich prompt: history + new message
+      const historyText = messages
+        .map((m) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`)
+        .join('\n')
 
-      const reply = data?.reply ?? '(No reply)'
+      const fullPrompt = historyText
+        ? `Previous conversation:\n${historyText}\n\nUser: ${clean}`
+        : clean
+
+      const reply = await callGemini(fullPrompt, system)
       setMessages((prev) => [...prev, { role: 'assistant', text: reply }])
     } catch (err) {
       setError(err.message)
