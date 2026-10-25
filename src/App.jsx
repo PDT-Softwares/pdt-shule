@@ -1,4 +1,5 @@
 ﻿import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import PageLoader from './components/PageLoader'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { SchoolProvider, useSchool } from './contexts/SchoolContext'
 import { ThemeProvider } from './contexts/ThemeContext'
