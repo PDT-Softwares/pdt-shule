@@ -40,7 +40,7 @@ export default function Signup() {
   function goNext(e) {
     e.preventDefault()
     if (!fullName.trim() || !email.trim() || password.length < 6) {
-      setError('Please fill all fields (password ≥ 6 chars).')
+      setError('Please fill all fields (password must be at least 6 characters).')
       return
     }
     setError('')
@@ -110,7 +110,8 @@ export default function Signup() {
 
       <div className="login-card" style={{ maxWidth: 460 }}>
         <div className="login-logo">
-          <img src="/logo.png" alt="PDT" style={{ width: 44, height: 44, objectFit: "contain" }} />
+          {/* Logo mpya hapa */}
+          <img src="/logo.png" alt="PDT Shule" style={{ width: 44, height: 44, objectFit: 'contain', borderRadius: 8 }} />
           <div>
             <div className="login-brand">PDT Shule</div>
             <div className="login-brand-sub">Create your school account</div>
@@ -119,23 +120,13 @@ export default function Signup() {
 
         {/* Stepper */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-          <div style={{
-            flex: 1, height: 6, borderRadius: 999,
-            background: step >= 1 ? 'var(--primary)' : 'var(--border)',
-            transition: 'background 0.3s',
-          }} />
-          <div style={{
-            flex: 1, height: 6, borderRadius: 999,
-            background: step >= 2 ? 'var(--primary)' : 'var(--border)',
-            transition: 'background 0.3s',
-          }} />
+          <div style={{ flex: 1, height: 6, borderRadius: 999, background: step >= 1 ? 'var(--primary)' : 'var(--border)', transition: 'background 0.3s' }} />
+          <div style={{ flex: 1, height: 6, borderRadius: 999, background: step >= 2 ? 'var(--primary)' : 'var(--border)', transition: 'background 0.3s' }} />
         </div>
 
         <h1 className="login-title">{step === 1 ? 'Your details' : 'Your school'}</h1>
         <p className="login-sub">
-          {step === 1
-            ? 'Step 1 of 2 — create your account.'
-            : 'Step 2 of 2 — set up your school.'}
+          {step === 1 ? 'Step 1 of 2 — create your account.' : 'Step 2 of 2 — set up your school.'}
         </p>
 
         {/* ===== STEP 1 ===== */}
@@ -143,20 +134,20 @@ export default function Signup() {
           <form onSubmit={goNext}>
             <div className="login-field">
               <label>Full name</label>
-              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required style={{ width: '100%' }} placeholder="Jane Doe" />
+              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required style={{ width: '100%', borderRadius: 999 }} placeholder="Jane Doe" />
             </div>
             <div className="login-field">
               <label>Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ width: '100%' }} placeholder="you@example.com" autoComplete="email" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ width: '100%', borderRadius: 999 }} placeholder="you@example.com" autoComplete="email" />
             </div>
             <div className="login-field">
               <label>Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} style={{ width: '100%' }} placeholder="At least 6 characters" autoComplete="new-password" />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} style={{ width: '100%', borderRadius: 999 }} placeholder="At least 6 characters" autoComplete="new-password" />
             </div>
 
             {error && <p className="error-text" style={{ marginBottom: 12 }}>{error}</p>}
 
-            <button type="submit" className="primary" style={{ width: '100%', marginTop: 8 }}>
+            <button type="submit" className="primary" style={{ width: '100%', marginTop: 8, borderRadius: 999 }}>
               Continue →
             </button>
 
@@ -171,11 +162,11 @@ export default function Signup() {
           <form onSubmit={handleSubmit}>
             <div className="login-field">
               <label>School name</label>
-              <input type="text" value={schoolName} onChange={handleSchoolNameChange} required style={{ width: '100%' }} placeholder="e.g. Nairobi Academy" />
+              <input type="text" value={schoolName} onChange={handleSchoolNameChange} required style={{ width: '100%', borderRadius: 999 }} placeholder="e.g. Nairobi Academy" />
             </div>
             <div className="login-field">
               <label>Slug (URL)</label>
-              <input type="text" value={schoolSlug} onChange={(e) => setSchoolSlug(e.target.value)} required style={{ width: '100%' }} placeholder="nairobi-academy" />
+              <input type="text" value={schoolSlug} onChange={(e) => setSchoolSlug(e.target.value)} required style={{ width: '100%', borderRadius: 999 }} placeholder="nairobi-academy" />
             </div>
 
             <div className="login-field">
@@ -190,7 +181,7 @@ export default function Signup() {
                       onClick={() => toggleLevel(lvl.value)}
                       style={{
                         padding: '10px 12px',
-                        borderRadius: 'var(--radius)',
+                        borderRadius: 999,
                         border: '1px solid ' + (active ? 'var(--primary)' : 'var(--border)'),
                         background: active ? 'var(--primary-soft)' : 'var(--surface)',
                         color: active ? 'var(--primary-hover)' : 'var(--text)',
@@ -215,11 +206,11 @@ export default function Signup() {
                 type="button"
                 onClick={() => { setError(''); setStep(1) }}
                 disabled={busy}
-                style={{ flex: 1 }}
+                style={{ flex: 1, borderRadius: 999 }}
               >
                 ← Back
               </button>
-              <button type="submit" disabled={busy} className="primary" style={{ flex: 2 }}>
+              <button type="submit" disabled={busy} className="primary" style={{ flex: 2, borderRadius: 999 }}>
                 {busy ? 'Creating…' : 'Create Account'}
               </button>
             </div>
@@ -233,4 +224,3 @@ export default function Signup() {
     </div>
   )
 }
-

@@ -38,15 +38,14 @@ export default function Login() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Animated background blobs */}
       <div className="login-blob login-blob-1" />
       <div className="login-blob login-blob-2" />
       <div className="login-blob login-blob-3" />
 
-      {/* Login card */}
       <div className="login-card">
         <div className="login-logo">
-          <img src="/logo.png" alt="PDT" style={{ width: 44, height: 44, objectFit: "contain" }} />
+          {/* HAPA NIMEWEKA LOGO */}
+          <img src="/logo.png" alt="PDT Shule" style={{ width: 44, height: 44, objectFit: 'contain', borderRadius: 8 }} />
           <div>
             <div className="login-brand">PDT Shule</div>
             <div className="login-brand-sub">School Management Platform</div>
@@ -99,11 +98,9 @@ export default function Login() {
         </p>
       </div>
 
-      {/* Footer */}
       <footer className="login-footer">
         © {new Date().getFullYear()} <strong>PDT Softwares</strong>. All rights reserved.
       </footer>
     </div>
   )
 }
-
