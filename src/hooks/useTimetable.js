@@ -1,60 +1,95 @@
-﻿import { useCallback, useState } from 'react'
+﻿import { useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useSchool } from '../contexts/SchoolContext'
 
 export function useTimetable() {
   const { currentSchool } = useSchool()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
   const schoolId = currentSchool?.school.id
 
-  const loadSlots = useCallback(async ({ classId, termId }) => {
+  const loadSlots = useCallback(async ({ classId, streamId, termId }) => {
     if (!schoolId || !classId || !termId) return []
-    setLoading(true)
-    setError('')
-
-    const { data, error: err } = await supabase
+    
+    let query = supabase
       .from('timetable_slots')
-      .select('*, subjects(id, name)')
+      .select('*, subjects(id, name), classes(id, name), streams(id, name)')
+      .eq('school_id', schoolId)
       .eq('class_id', classId)
       .eq('term_id', termId)
 
-    setLoading(false)
-    if (err) { setError(err.message); return [] }
+    // Kama stream imechaguliwa, chuja kwa stream hiyo. Kama haijachaguliwa, chukua zote za class hiyo.
+    if (streamId) {
+      query = query.eq('stream_id', streamId)
+    }
+
+    const { data, error } = await query
+    if (error) {
+      console.error('loadSlots error:', error)
+      return []
+    }
     return data ?? []
   }, [schoolId])
 
-  const upsertSlot = useCallback(async (slot) => {
+  const upsertSlot = useCallback(async ({ class_id, stream_id, subject_id, term_id, day_of_week, period, teacher_id }) => {
     if (!schoolId) throw new Error('No school selected')
-    setError('')
+    if (!class_id) throw new Error('Pick a class.')
+    if (!subject_id) throw new Error('Pick a subject.')
+    if (!term_id) throw new Error('Pick a term.')
+
     const payload = {
       school_id: schoolId,
-      class_id: slot.class_id,
-      stream_id: slot.stream_id ?? null,
-      subject_id: slot.subject_id,
-      teacher_id: slot.teacher_id ?? null,
-      term_id: slot.term_id,
-      day_of_week: slot.day_of_week,
-      period: slot.period,
+      class_id,
+      stream_id: stream_id || null,
+      subject_id,
+      term_id,
+      day_of_week: Number(day_of_week),
+      period: Number(period),
+      teacher_id: teacher_id || null,
     }
-    const { error: err } = await supabase
+
+    const { error } = await supabase
       .from('timetable_slots')
-      .upsert(payload, { onConflict: 'class_id,term_id,day_of_week,period' })
-    if (err) throw new Error(err.message)
+      .upsert(payload, { onConflict: 'school_id,class_id,stream_id,term_id,day_of_week,period' })
+    if (error) throw new Error(error.message)
   }, [schoolId])
 
-  const deleteSlot = useCallback(async ({ classId, termId, day, period }) => {
-    if (!schoolId) throw new Error('No school selected')
-    const { error: err } = await supabase
+  const deleteSlot = useCallback(async ({ classId, streamId, termId, day, period }) => {
+    if (!schoolId || !classId || !termId) return
+    let q = supabase
       .from('timetable_slots')
       .delete()
+      .eq('school_id', schoolId)
       .eq('class_id', classId)
       .eq('term_id', termId)
-      .eq('day_of_week', day)
-      .eq('period', period)
-    if (err) throw new Error(err.message)
+      .eq('day_of_week', Number(day))
+      .eq('period', Number(period))
+      
+    if (streamId) q = q.eq('stream_id', streamId)
+    else q = q.is('stream_id', null)
+    
+    const { error } = await q
+    if (error) throw new Error(error.message)
   }, [schoolId])
 
-  return { loading, error, loadSlots, upsertSlot, deleteSlot }
+  const bulkUpsert = useCallback(async (rows) => {
+    if (!schoolId) throw new Error('No school selected')
+    if (!rows || rows.length === 0) return
+
+    const cleaned = rows.map(r => ({
+      school_id: schoolId,
+      class_id: r.class_id,
+      stream_id: r.stream_id || null,
+      subject_id: r.subject_id,
+      term_id: r.term_id,
+      day_of_week: Number(r.day_of_week),
+      period: Number(r.period),
+      teacher_id: r.teacher_id || null,
+    }))
+
+    const { error } = await supabase
+      .from('timetable_slots')
+      .upsert(cleaned, { onConflict: 'school_id,class_id,stream_id,term_id,day_of_week,period' })
+    if (error) throw new Error(error.message)
+  }, [schoolId])
+
+  return { loadSlots, upsertSlot, deleteSlot, bulkUpsert }
 }

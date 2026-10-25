@@ -1,13 +1,69 @@
 ﻿import { useEffect, useRef, useState } from 'react'
-import { Send, Sparkles, Trash2 } from 'lucide-react'
+import { Send, Sparkles, Trash2, Bot, User, Shield, BookOpen, GraduationCap } from 'lucide-react'
 import { useAIChat } from '../hooks/useAIChat'
 import { useSchool } from '../contexts/SchoolContext'
+import PageFooter from '../components/PageFooter'
+
+function roleMeta(role) {
+  switch (role) {
+    case 'admin':
+      return {
+        label: 'Administrator',
+        icon: Shield,
+        color: 'var(--primary)',
+        suggestions: [
+          'How do I add a new teacher?',
+          'How do I set up a new term?',
+          'How do I generate a timetable with AI?',
+          'How do I post a school-wide announcement?',
+        ],
+      }
+    case 'classteacher':
+      return {
+        label: 'Class Teacher',
+        icon: GraduationCap,
+        color: 'var(--lime)',
+        suggestions: [
+          'How do I record marks for my class?',
+          'How do I take attendance for my class?',
+          'How do I view my class report cards?',
+          'How do I see my class timetable?',
+        ],
+      }
+    case 'teacher':
+      return {
+        label: 'Subject Teacher',
+        icon: BookOpen,
+        color: 'var(--primary-hover)',
+        suggestions: [
+          'How do I record marks for my subject?',
+          'How do I view my teaching schedule?',
+          'What are assessment periods?',
+          'How do I post an announcement?',
+        ],
+      }
+    default:
+      return {
+        label: 'User',
+        icon: User,
+        color: 'var(--text-muted)',
+        suggestions: [
+          'What can PDT Shule do?',
+          'How do I get started?',
+          'Who built this platform?',
+        ],
+      }
+  }
+}
 
 export default function AI() {
   const { messages, sending, error, send, reset } = useAIChat()
-  const { currentSchool } = useSchool()
+  const { currentSchool, currentRole } = useSchool()
   const [input, setInput] = useState('')
   const scrollRef = useRef(null)
+
+  const meta = roleMeta(currentRole)
+  const RoleIcon = meta.icon
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -23,98 +79,108 @@ export default function AI() {
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+    <div className="ai-page">
+      {/* Header */}
+      <div className="ai-header">
         <div>
-          <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Sparkles size={22} /> AI Assistant
+          <h1 className="ai-title">
+            <span className="ai-title-icon"><Sparkles size={20} /></span>
+            AI Assistant
           </h1>
-          <p className="muted" style={{ margin: '4px 0 0' }}>
+          <p className="muted" style={{ margin: '4px 0 0', fontSize: 13 }}>
             Ask anything about {currentSchool?.school.name}
           </p>
+          <div className="ai-role-badge" style={{ borderColor: meta.color }}>
+            <RoleIcon size={12} style={{ color: meta.color }} />
+            <span>{meta.label} mode</span>
+          </div>
         </div>
         {messages.length > 0 && (
-          <button onClick={reset} disabled={sending} style={{ padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button
+            onClick={reset}
+            disabled={sending}
+            className="ai-clear"
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
             <Trash2 size={14} /> Clear
           </button>
         )}
       </div>
 
-      <div className="card" style={{
-        padding: 0, display: 'flex', flexDirection: 'column',
-        height: 'calc(100vh - 260px)', minHeight: 400,
-      }}>
-        <div
-          ref={scrollRef}
-          style={{ flex: 1, overflowY: 'auto', padding: 20 }}
-        >
+      {/* Chat card */}
+      <div className="ai-card">
+        <div ref={scrollRef} className="ai-scroll">
           {messages.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '40px 20px', opacity: 0.6 }}>
-              <Sparkles size={32} style={{ marginBottom: 8 }} />
-              <p>Ask me anything. For example:</p>
-              <ul style={{ listStyle: 'none', padding: 0, fontSize: 13 }}>
-                <li>"Niambie jinsi ya kuongeza mwanafunzi mpya"</li>
-                <li>"How do I record marks for Form 1?"</li>
-                <li>"Summarize today's attendance"</li>
-              </ul>
+            <div className="ai-empty">
+              <div className="ai-empty-icon"><Sparkles size={28} /></div>
+              <h3 style={{ margin: '12px 0 4px', fontSize: 18 }}>How can I help?</h3>
+              <p className="muted" style={{ margin: '0 0 16px', fontSize: 13 }}>
+                Suggestions for your role ({meta.label}):
+              </p>
+              <div className="ai-suggestions">
+                {meta.suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => send(s)}
+                    disabled={sending}
+                    className="ai-suggestion"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
-          {messages.map((m, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start',
-              marginBottom: 12,
-            }}>
-              <div style={{
-                maxWidth: '75%',
-                padding: '10px 14px',
-                borderRadius: 16,
-                background: m.role === 'user' ? 'var(--primary)' : 'var(--surface-2)',
-                color: m.role === 'user' ? '#fff' : 'var(--text)',
-                whiteSpace: 'pre-wrap',
-                fontSize: 14,
-              }}>
-                {m.text}
+          {messages.map((m, i) => {
+            const isUser = m.role === 'user'
+            return (
+              <div key={i} className={`ai-row ${isUser ? 'ai-row-user' : 'ai-row-bot'}`}>
+                <div className={`ai-avatar ${isUser ? 'ai-avatar-user' : 'ai-avatar-bot'}`}>
+                  {isUser ? <User size={16} /> : <Bot size={16} />}
+                </div>
+                <div className={`ai-bubble ${isUser ? 'ai-bubble-user' : 'ai-bubble-bot'}`}>
+                  {m.text}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
 
           {sending && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 12 }}>
-              <div style={{
-                padding: '10px 14px', borderRadius: 16,
-                background: 'var(--surface-2)', opacity: 0.7, fontSize: 14,
-              }}>
-                Thinking…
+            <div className="ai-row ai-row-bot">
+              <div className="ai-avatar ai-avatar-bot"><Bot size={16} /></div>
+              <div className="ai-bubble ai-bubble-bot">
+                <span className="ai-typing">
+                  <span></span><span></span><span></span>
+                </span>
               </div>
             </div>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} style={{
-          display: 'flex', gap: 8, padding: 16,
-          borderTop: '1px solid var(--border)',
-        }}>
+        {/* Composer */}
+        <form onSubmit={handleSubmit} className="ai-composer">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message…"
+            placeholder={`Ask as ${meta.label}…`}
             disabled={sending}
-            style={{ flex: 1 }}
+            className="ai-input"
           />
           <button
             type="submit"
-            className="primary"
+            className="primary ai-send"
             disabled={sending || !input.trim()}
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            aria-label="Send"
           >
-            <Send size={16} /> Send
+            <Send size={16} />
           </button>
         </form>
       </div>
 
       {error && <p className="error-text" style={{ marginTop: 8 }}>{error}</p>}
+
+      <PageFooter />
     </div>
   )
 }

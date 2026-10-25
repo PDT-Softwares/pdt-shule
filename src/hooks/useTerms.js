@@ -80,7 +80,6 @@ export function useTerms() {
   }
 
   async function setCurrentYear(id) {
-    // Clear any existing current year, then set this one.
     await supabase.from('academic_years').update({ is_current: false }).eq('school_id', schoolId)
     const { error: err } = await supabase
       .from('academic_years')
@@ -100,10 +99,29 @@ export function useTerms() {
     await load()
   }
 
+  async function updateYear(id, patch) {
+    const { error: err } = await supabase
+      .from('academic_years')
+      .update(patch)
+      .eq('id', id)
+    if (err) throw new Error(err.message)
+    await load()
+  }
+
+  async function updateTerm(id, patch) {
+    const { error: err } = await supabase
+      .from('terms')
+      .update(patch)
+      .eq('id', id)
+    if (err) throw new Error(err.message)
+    await load()
+  }
+
   return {
     years, terms, loading, error,
     addYear, deleteYear, addTerm, deleteTerm,
     setCurrentYear, setCurrentTerm,
+    updateYear, updateTerm,
     reload: load,
   }
 }

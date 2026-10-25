@@ -9,17 +9,21 @@ export function useAttendance() {
 
   const schoolId = currentSchool?.school.id
 
-  const loadDay = useCallback(async ({ classId, date }) => {
+  const loadDay = useCallback(async ({ classId, streamId, date }) => {
     if (!schoolId || !classId || !date) return { students: [], byStudent: {} }
     setLoading(true)
     setError('')
 
-    const { data: studentRows, error: sErr } = await supabase
+    let query = supabase
       .from('students')
-      .select('id, full_name, admission_number')
+      .select('id, full_name, admission_number, streams(name)')
       .eq('class_id', classId)
       .eq('status', 'active')
       .order('admission_number', { ascending: true })
+
+    if (streamId) query = query.eq('stream_id', streamId)
+
+    const { data: studentRows, error: sErr } = await query
 
     if (sErr) { setError(sErr.message); setLoading(false); return { students: [], byStudent: {} } }
 

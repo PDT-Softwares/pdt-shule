@@ -16,7 +16,7 @@ export function useStudents() {
     setError('')
     const { data, error: err } = await supabase
       .from('students')
-      .select('*, classes(id, name)')
+      .select('*, classes(id, name), streams(id, name)')
       .order('admission_number', { ascending: true })
     if (err) setError(err.message)
     else setStudents(data ?? [])
