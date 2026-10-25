@@ -4,22 +4,16 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pdt-shule</title>
+    <title>PDT Shule</title>
   </head>
-  <body>
-      <div id="splash-screen" style="position:fixed;inset:0;background:#0f172a;display:flex;align-items:center;justify-content:center;z-index:9999;">
-    <img src="/logo.png" alt="PDT Shule" style="width:120px;height:auto;object-fit:contain;" />
-  </div>
-  <script>
-    // Ficha splash screen baada ya React kupakia
-    window.addEventListener('load', () => {
-      const splash = document.getElementById('splash-screen');
-      if (splash) splash.style.display = 'none';
-    });
-  </script>
-  <div id="root"></div>
+  <body style="margin: 0; background: #0f172a;">
+    <div id="root"></div>
+    
+    <!-- Splash Screen (Logo inayoonekana wakati app inapakia) -->
+    <div id="splash-screen" style="position:fixed;inset:0;background:#0f172a;display:flex;align-items:center;justify-content:center;z-index:9999;">
+      <img src="/logo.png" alt="PDT Shule" style="width:120px;height:auto;object-fit:contain;" />
+    </div>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-
-
