@@ -46,7 +46,7 @@ export default function Login() {
       {/* Login card */}
       <div className="login-card">
         <div className="login-logo">
-          <div className="login-logo-mark">P</div>
+          <img src="/logo.png" alt="PDT" style={{ width: 44, height: 44, objectFit: "contain" }} />
           <div>
             <div className="login-brand">PDT Shule</div>
             <div className="login-brand-sub">School Management Platform</div>

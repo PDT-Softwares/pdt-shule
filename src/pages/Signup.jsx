@@ -110,7 +110,7 @@ export default function Signup() {
 
       <div className="login-card" style={{ maxWidth: 460 }}>
         <div className="login-logo">
-          <div className="login-logo-mark">P</div>
+          <img src="/logo.png" alt="PDT" style={{ width: 44, height: 44, objectFit: "contain" }} />
           <div>
             <div className="login-brand">PDT Shule</div>
             <div className="login-brand-sub">Create your school account</div>

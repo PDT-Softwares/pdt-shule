@@ -49,7 +49,7 @@ export default function WorkspaceLayout() {
         position: 'sticky', top: 0, height: '100vh',
       }}>
         <div style={{ color: 'var(--text)', fontWeight: 800, fontSize: 18, padding: '4px 12px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--primary)', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900 }}>P</div>
+          <img src="/logo.png" alt="PDT" style={{ height: 32, width: "auto", objectFit: "contain" }} />
           PDT Shule
         </div>
 
